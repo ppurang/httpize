@@ -71,17 +71,8 @@ class ResourceCache extends StrictLogging {
   }
 
   def getResource(dir: String, name: String, req: Request): Task[Response] =  {
-    // If the client suggests they may already have a fresh version, send NotModified
-    req.headers.get(`If-Modified-Since`).flatMap { h =>
-      val expired = h.date.compareTo(startDate) < 0
-      logger.trace(s"Expired: ${expired}. Request age: ${h.date}, Modified: $startDate")
-
-      if (expired) None
-      else Some(NotModified())
-    }.getOrElse {
       _getResource(dir, name)
-        .addHeaders(`Last-Modified`(startDate))
-    }
+        //.addHeaders(`Last-Modified`(startDate))
   }
 
 }
