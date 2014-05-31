@@ -8,6 +8,13 @@ Resemble HTTP as in http://www.merriam-webster.com/dictionary/-ize
 httpbin.org for the inspiration
 
 http4s_demo for seeding the project 
+
+#Start Development
+
+Run the ppsbt shell script.
+
+#Collaboration
+Fork the repository and create pull requests.
     
 
 
