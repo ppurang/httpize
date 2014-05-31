@@ -21,6 +21,11 @@ class Routes extends LazyLogging {
 
     case r @ Get -> Root / "headers" =>  Ok(HeadersContainer(r.headers))
 
+    case r@Get -> Root / "cookies" / "set" => CookiesSetter.addFromParams(Ok(s"Setting cookies ${r.multiParams}"), r)
+
+    case r@Get -> Root / "cookies" / "delete" => val ok = Ok(s"Deleting cookies ${r.multiParams}")
+      r.multiParams.map(x => ok.removeCookie(x._1))
+      ok
   }
 
 }
