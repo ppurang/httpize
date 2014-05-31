@@ -10,6 +10,7 @@ libraryDependencies ++= Seq(
   "org.http4s" %% "http4s-core" % "0.2.0-SNAPSHOT",
   "org.http4s" %% "http4s-dsl" % "0.2.0-SNAPSHOT",
   "org.http4s" %% "http4s-blaze" % "0.2.0-SNAPSHOT",
+  "io.argonaut" %% "argonaut" % "6.0.4",
   "org.scalaz" %% "scalaz-core" % "7.0.6"  withSources(),
   "org.scalaz" %% "scalaz-concurrent" % "7.0.6"  withSources(),
   "org.scalacheck" %% "scalacheck" % "1.11.4" % "test",
