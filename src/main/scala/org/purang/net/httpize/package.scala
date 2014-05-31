@@ -10,6 +10,10 @@ import org.http4s
 
 
 package object httpize {
+  implicit class ComposePartial[A, B](pf: PartialFunction[A, B]) {
+    def andThenPartial[C](that: PartialFunction[B, C]): PartialFunction[A, C] =
+      Function.unlift(pf.lift(_) flatMap that.lift)
+  }
 
   implicit def TWritable[T](implicit charset: CharacterSet = CharacterSet.`UTF-8`, encode: EncodeJson[T]) =
     new SimpleWritable[T] {
@@ -45,13 +49,26 @@ package object httpize {
   //All headers sent by the client:
   case class HeadersContainer(headers: Headers)
 
-  implicit def HeaderCodecJson: EncodeJson[Header] = EncodeJson(
+  implicit def HeaderEncodeJson: EncodeJson[Header] = EncodeJson(
     (h: Header) => (h.toRaw.name.toString := h.toRaw.value) ->: jEmptyObject
   )
 
-  implicit def HeadersContainerCodecJson: EncodeJson[HeadersContainer] = EncodeJson(
+  implicit def HeadersContainerEncodeJson: EncodeJson[HeadersContainer] = EncodeJson(
     (hc: HeadersContainer) =>  ("headers" := hc.headers.toList)    ->: jEmptyObject
   )
 
+  implicit def MethodCodecJson: EncodeJson[Method] = EncodeJson(
+    (m: Method) =>  jString(m.name)
+  )
+
+  case class All(method: Method, headers: HeadersContainer, origin: IP)
+
+  object All {
+    def apply(r: Request): All = All(r.requestMethod, HeadersContainer(r.headers), IP(r))
+      Cookie
+
+    implicit def AllCodecJson: EncodeJson[All] = jencode3L((a:All) => (a.method, a.headers, a.origin))("method", "headers", "origin")
+
+  }
 
 }

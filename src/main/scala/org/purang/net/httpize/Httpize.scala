@@ -12,6 +12,7 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 import java.nio.channels.AsynchronousSocketChannel
 import org.http4s.{HttpService, Status, Request}
 import org.http4s.blaze.channel.SocketConnection
+import org.http4s.middleware.GZip
 
 
 /**
@@ -23,6 +24,8 @@ class Httpize(addr: InetSocketAddress) extends StrictLogging {
   private val pool = Executors.newCachedThreadPool()
 
   val routes = new Routes().service
+  val static = new StaticRoutes().service
+  val gzipped = new GzipRoutes().service
 
   val service: HttpService =  { case req: Request =>
     val uri = req.requestUri.path
@@ -30,7 +33,7 @@ class Httpize(addr: InetSocketAddress) extends StrictLogging {
       logger.info(s"${req.remoteAddr.getOrElse("null")} -> ${req.requestMethod}: ${req.requestUri.path}")
     }
 
-    routes.applyOrElse(req, {_: Request => Status.NotFound(req)})
+    routes orElse GZip(gzipped) orElse static applyOrElse (req, {_: Request => Status.NotFound(req)})
   }
 
   private val factory = new NIO2ServerChannelFactory(f) {
