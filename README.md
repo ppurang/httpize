@@ -12,6 +12,9 @@ http4s_demo for seeding the project
 #Start Development
 
 Run the ppsbt shell script.
+
+#Collaboration
+Fork the repository and create pull requests.
     
 
 
