@@ -7,6 +7,9 @@ import scodec.bits.ByteVector
 
 import Header.`Content-Type`.`application/json`
 import org.http4s
+import org.http4s.Cookie
+import org.http4s.Status.EntityResponseGenerator
+import scalaz.concurrent.Task
 
 
 package object httpize {
@@ -70,5 +73,23 @@ package object httpize {
     implicit def AllCodecJson: EncodeJson[All] = jencode3L((a:All) => (a.method, a.headers, a.origin))("method", "headers", "origin")
 
   }
+
+  case class Cookies(params: Map[String, Seq[String]])
+
+  object CookiesSetter {
+    def apply(r: Request): Cookies = {
+      org.http4s.Header.`Set-Cookie`
+      Cookies(r.multiParams)
+    }
+    def addFromParams(responseTask: Task[Response], r: Request): Task[Response] = {
+      var result = responseTask
+      for((name,values) <- r.multiParams){
+        result = result.addCookie(name, values.mkString(","))
+      }
+      result
+    }
+  }
+
+
 
 }
