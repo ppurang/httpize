@@ -16,7 +16,11 @@ class Routes extends LazyLogging {
   val service: HttpService = {
     case Get -> Root / "hello" => Ok("Hello world!")
 
+    case Get -> Root / "hello" / rest => Ok(s"Hello, $rest!")
+
     case r @ Get -> Root / "ip" =>  Ok(IP(r))
+
+    case r @ Get -> Root / "user-agent" =>  Ok(UserAgent(r))
 
     case r if r.pathInfo.endsWith(".html")  => cache.getResource("", r.pathInfo, r)
 
