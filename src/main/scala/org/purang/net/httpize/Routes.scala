@@ -22,6 +22,8 @@ class Routes extends LazyLogging {
 
     case r @ Get -> Root / "user-agent" =>  Ok(UserAgent(r))
 
+    case r @ Get -> Root / "headers" =>  Ok(HeadersContainer(r.headers))
+
     case r if r.pathInfo.endsWith(".html")  => cache.getResource("", r.pathInfo, r)
 
     case r if (r.pathInfo.startsWith("/js") || r.pathInfo.startsWith("/img") || r.pathInfo.startsWith("/css"))  => cache.getResource("", r.pathInfo, r)

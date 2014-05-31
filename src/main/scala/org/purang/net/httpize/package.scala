@@ -1,11 +1,12 @@
 package org.purang.net
 
-import org.http4s.{Header, SimpleWritable, CharacterSet, Request}
+import org.http4s._
 import argonaut._, Argonaut._
 import org.http4s.Header.`Content-Type`
 import scodec.bits.ByteVector
 
 import Header.`Content-Type`.`application/json`
+import org.http4s
 
 
 package object httpize {
@@ -17,6 +18,7 @@ package object httpize {
       def asChunk(t: T) = ByteVector.view(encode(t).nospaces.getBytes(charset.charset))
     }
 
+  //IP address of remote client:
   case class IP(remote: String, `x-forwarded-for`: String)
 
   object IP {
@@ -29,6 +31,7 @@ package object httpize {
       casecodec2(IP.apply, IP.unapply)("remote", "x-forwarded-for")
   }
 
+  //User agent of client:
   case class UserAgent(`user-agent`: String)
 
   object UserAgent {
@@ -38,5 +41,17 @@ package object httpize {
 
     implicit def UserAgentCodecJson: CodecJson[UserAgent] = casecodec1(UserAgent.apply(_: String), UserAgent.unapply)("user-agent")
   }
+
+  //All headers sent by the client:
+  case class HeadersContainer(headers: Headers)
+
+  implicit def HeaderCodecJson: EncodeJson[Header] = EncodeJson(
+    (h: Header) => (h.toRaw.name.toString := h.toRaw.value) ->: jEmptyObject
+  )
+
+  implicit def HeadersContainerCodecJson: EncodeJson[HeadersContainer] = EncodeJson(
+    (hc: HeadersContainer) =>  ("headers" := hc.headers.toList)    ->: jEmptyObject
+  )
+
 
 }
