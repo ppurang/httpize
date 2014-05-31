@@ -21,6 +21,14 @@ package object httpize {
 casecodec2(IP.apply, IP.unapply)("remote", "x-forwarded-for")
   }
 
+  case class UserAgent(`user-agent`: String)
+
+  object UserAgent {
+    def apply(r: Request): UserAgent = {
+      UserAgent(r.headers.get(org.http4s.Header.`User-Agent`).toString)
+    }
+    implicit def UserAgentCodecJson: CodecJson[UserAgent] = casecodec1(UserAgent.apply(_ : String), UserAgent.unapply)("user-agent")
+  }
 
   implicit def TWritable[T](implicit charset: CharacterSet = CharacterSet.`UTF-8`, encode: EncodeJson[T]) =
       new SimpleWritable[T] {
