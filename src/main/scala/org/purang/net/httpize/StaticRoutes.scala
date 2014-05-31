@@ -15,7 +15,9 @@ class StaticRoutes extends LazyLogging {
 
   val service: HttpService = {
 
-    case r if r.pathInfo.endsWith(".html")  => cache.getResource("", r.pathInfo, r)
+    case r if r.pathInfo.endsWith("moby")  => cache.getResource("", r.pathInfo + ".html", r)
+
+    case r if (r.pathInfo.endsWith(".html") ||  r.pathInfo.endsWith(".txt") ) => cache.getResource("", r.pathInfo, r)
 
     case r if (r.pathInfo.startsWith("/js") || r.pathInfo.startsWith("/img") || r.pathInfo.startsWith("/css"))  => cache.getResource("", r.pathInfo, r)
 
