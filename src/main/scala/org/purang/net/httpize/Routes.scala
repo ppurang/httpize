@@ -46,6 +46,8 @@ class Routes extends LazyLogging {
     case req @ (Post -> Root / "post" | Put -> Root / "put" | Delete -> Root / "delete" | Patch -> Root / "patch" ) =>
           Task.now(Response(body = req.body))
 
+    case Get -> Root / "stream" / n => Ok(Process.range(0, n.toInt).map(i => s"This is string number $i"))
+
   }
 
 }
