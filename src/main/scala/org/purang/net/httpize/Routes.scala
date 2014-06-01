@@ -6,7 +6,8 @@ import org.http4s.Status._
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
 import org.http4s.dsl./
-import scalaz.concurrent.Task
+import org.http4s.Header.`Content-Type`
+import org.http4s.util.jodaTime.UnixEpoch
 
 class Routes extends LazyLogging {
 
@@ -21,11 +22,12 @@ class Routes extends LazyLogging {
 
     case r @ Get -> Root / "headers" =>  Ok(HeadersContainer(r.headers))
 
-    case r@Get -> Root / "cookies" / "set" => CookiesSetter.addFromParams(Ok(s"Setting cookies ${r.multiParams}"), r)
+    case r @ Get -> Root / "cookies" / "set" => Okk(s"Bought some cookies ${r.multiParams}", `Content-Type`.`text/plain`, Headers((for (c <- r.multiParams) yield Header.`Set-Cookie`(Cookie(c._1, c._2.mkString(","), path = Some("/")))).toList))
 
-    case r@Get -> Root / "cookies" / "delete" => val ok = Ok(s"Deleting cookies ${r.multiParams}")
-      r.multiParams.map(x => ok.removeCookie(x._1))
-      ok
+    case r @ Get -> Root / "cookies" / "delete" => Okk(s"Ate all the cookies ${r.multiParams}", `Content-Type`.`text/plain`, Headers((for (c <- r.multiParams) yield Header.`Set-Cookie`(Cookie(c._1, "", path = Some("/"), expires = Some(UnixEpoch), maxAge = Some(0)))).toList))
+
+    case r @ Get -> Root / "cookies"  => Ok(r.headers.get(Header.`Cookie`).getOrElse("What Cookies?"))
+
   }
 
 }
@@ -38,6 +40,4 @@ class GzipRoutes extends LazyLogging {
   }
 
 }
-
-
 

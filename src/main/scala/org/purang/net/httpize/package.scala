@@ -25,6 +25,22 @@ package object httpize {
       def asChunk(t: T) = ByteVector.view(encode(t).nospaces.getBytes(charset.charset))
     }
 
+  val Okk = new Status(200, "OK") with EntityResponseGenerator {
+    self: Status =>
+    def apply[A](body: A, contentType: `Content-Type`, mheaders: Headers = Headers.empty)(implicit w: Writable[A]): Task[Response] = {
+      var headers: Headers = Headers.empty
+      // tuple assignment runs afoul of https://issues.scala-lang.org/browse/SI-5301
+      headers :+= contentType
+      w.toBody(body).map { case (proc, len) =>
+        len foreach {
+          headers :+= Header.`Content-Length`(_)
+        }
+        Response(self, headers ++ mheaders, proc)
+      }
+    }
+  }
+
+
   //IP address of remote client:
   case class IP(remote: String, `x-forwarded-for`: String)
 
@@ -74,21 +90,8 @@ package object httpize {
 
   }
 
-  case class Cookies(params: Map[String, Seq[String]])
 
-  object CookiesSetter {
-    def apply(r: Request): Cookies = {
-      org.http4s.Header.`Set-Cookie`
-      Cookies(r.multiParams)
-    }
-    def addFromParams(responseTask: Task[Response], r: Request): Task[Response] = {
-      var result = responseTask
-      for((name,values) <- r.multiParams){
-        result = result.addCookie(name, values.mkString(","))
-      }
-      result
-    }
-  }
+
 
 
 
