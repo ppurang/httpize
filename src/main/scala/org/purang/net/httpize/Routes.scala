@@ -13,6 +13,7 @@ import scalaz.stream.Process
 import concurrent.duration._
 import Duration._
 import scala.util.Try
+import scalaz.concurrent.Task
 
 class Routes extends LazyLogging {
 
@@ -41,6 +42,9 @@ class Routes extends LazyLogging {
         Ok(s"Phew! Done after $t seconds.")
       }
     }.getOrElse(BadRequest(s"$time needs to be an int"))
+
+    case req @ (Post -> Root / "post" | Put -> Root / "put" | Delete -> Root / "delete" | Patch -> Root / "patch" ) =>
+          Task.now(Response(body = req.body))
 
   }
 
