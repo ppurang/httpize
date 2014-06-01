@@ -22,7 +22,12 @@ resolvers ++= Seq(
   "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases"
 )
 
-scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-feature", "-unchecked", "-language:_", "-optimize", "-Yinline", "-Yinline-warnings" , "-Ywarn-all")
+scalacOptions ++= Seq("-encoding",
+  "UTF-8",
+  "-deprecation", "-feature", "-unchecked", "-language:_")
+  //"-optimize",
+  //"-Yinline", "-Yinline-warnings" , "-Ywarn-all")
+//ran into this: https://issues.scala-lang.org/browse/SI-3882
 
 Revolver.settings
 
