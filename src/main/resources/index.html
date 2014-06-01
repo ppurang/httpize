@@ -39,6 +39,8 @@
   ol.man-decor li.tl {text-align:left}
   ol.man-decor li.tc {text-align:center;letter-spacing:4px}
   ol.man-decor li.tr {text-align:right;float:right}
+  a span.wth {color: #ff0000}
+  a span.nd {color: #0000}
   </style>
   <style type='text/css' media='all'>
   /* style: 80c */
@@ -68,8 +70,9 @@
 <li><code>/put</code> Returns PUT data.</li>
 <li><code>/patch</code> Returns PATCH data.</li>
 <li><code>/delete</code> Returns DELETE data</li>-->
-<li><a href="/gzip" data-bare-link="true"><code>/gzip</code></a> Returns gzip-encoded data.</li>
-<!-- <li><a href="/deflate" data-bare-link="true"><code>/deflate</code></a> Returns deflate-encoded data.</li>
+<li><a href="/gzip" data-bare-link="true"><code>/gzip<span class="wth" title="Really? why would you do it only for a certain resourse. Use Accept-Encoding for all resources. " >**</span></code></a> Returns gzip-encoded data.</li>
+<li><code>/deflate</code> Returns deflate-encoded data.</li>
+<!--
 <li><a href="/status/418"><code>/status/:code</code></a> Returns given HTTP Status code.</li>
 <li><a href="/response-headers?some-request-header=some-header-value"><code>/response-headers?key=val</code></a> Returns given response headers.</li>
 <li><a href="/redirect/6"><code>/redirect/:n</code></a> 302 Redirects <em>n</em> times.</li>
@@ -77,7 +80,7 @@
 <li><a href="/relative-redirect/6"><code>/relative-redirect/:n</code></a> 302 Relative redirects <em>n</em> times.</li> -->
 <li><a href="/cookies" data-bare-link="true"><code>/cookies</code></a> Returns cookie data.</li>
 <li><a href="/cookies/set?k1=v1&amp;k2=v2"><code>/cookies/set?name=value</code></a> Sets one or more simple cookies.</li>
-<li><a href="/cookies/delete?k1&amp;k2"><code>/cookies/delete?name</code></a> Deletes one or more simple cookies.</li><!--
+<li><a href="/cookies/delete?k1&amp;k2"><code>/cookies/delete?name<span class="wth" title=" http://stackoverflow.com/questions/5285940/correct-way-to-delete-cookies-server-side">***</span></code></a> Deletes one or more simple cookies.</li><!--
 <li><a href="/basic-auth/user/passwd"><code>/basic-auth/:user/:passwd</code></a> HTTPBasic Auth.</li>
 <li><a href="/hidden-basic-auth/user/passwd"><code>/hidden-basic-auth/:user/:passwd</code></a> 404'd BasicAuth.</li>
 <li><a href="/digest-auth/auth/user/passwd"><code>/digest-auth/:qop/:user/:passwd</code></a> HTTP Digest Auth.</li>
