@@ -69,7 +69,7 @@ package object httpize {
   case class HeadersContainer(headers: Headers)
 
   implicit def HeaderEncodeJson: EncodeJson[Header] = EncodeJson(
-    (h: Header) => (h.toRaw.name.toString := h.toRaw.value) ->: jEmptyObject
+    (h: Header) => (h.name.toString := h.value) ->: jEmptyObject
   )
 
   implicit def HeadersContainerEncodeJson: EncodeJson[HeadersContainer] = EncodeJson(
