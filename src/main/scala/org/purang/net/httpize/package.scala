@@ -6,10 +6,10 @@ import org.http4s.Header.`Content-Type`
 import scodec.bits.ByteVector
 
 import Header.`Content-Type`.`application/json`
-import org.http4s
 import org.http4s.Cookie
 import org.http4s.Status.EntityResponseGenerator
-import scalaz.concurrent.Task
+import scalaz.concurrent.{Strategy, Task}
+import java.util.concurrent.ExecutorService
 
 
 package object httpize {
@@ -93,9 +93,20 @@ package object httpize {
   object Tasks {
     import scalaz._, Scalaz._
 
-    def apply[A](req: Request): (=> A) => Task[A] = a => req.headers.get(
+    def apply[A](req: Request, pool: ExecutorService = Strategy.DefaultExecutorService): (=> A) => Task[A] = a => req.headers.get(
       org.http4s.Headerz.`Execution-Mode`
-    ).fold(Task.now(a))(h => if (h.value.toLowerCase === "delay") Task.delay(a) else Task.now(a))
+    ).fold(Task.now(a))(h => {
+      val hv = h.value.toLowerCase
+      if (hv === "delay") {
+        Task.delay(a)
+      } else if(hv === "now") {
+        Task.now(a)
+      } else if(hv === "fork") {
+        Task.fork(Task(a)) //https://groups.google.com/forum/#!topic/scalaz/4y_p56w2AOo
+      } else {
+        Task(a)
+      }
+    })
   }
 
 }
