@@ -90,9 +90,12 @@ package object httpize {
 
   }
 
+  object Tasks {
+    import scalaz._, Scalaz._
 
-
-
-
+    def apply[A](req: Request): (=> A) => Task[A] = a => req.headers.get(
+      org.http4s.Headerz.`Execution-Mode`
+    ).fold(Task.now(a))(h => if (h.value.toLowerCase === "delay") Task.delay(a) else Task.now(a))
+  }
 
 }

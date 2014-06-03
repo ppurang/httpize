@@ -53,8 +53,7 @@ class Routes extends LazyLogging {
       }
     }.getOrElse(BadRequest(s"$time needs to be an int"))
 
-    case req @ (Post -> Root / "post" | Put -> Root / "put" | Delete -> Root / "delete" | Patch -> Root / "patch" ) =>
-          Task.now(Response(body = req.body))
+    case req @ (Post -> Root / "post" | Put -> Root / "put" | Delete -> Root / "delete" | Patch -> Root / "patch" ) => Tasks(req){Response(body = req.body)}
 
     case Get -> Root / "stream" / n => Ok(Process.range(0, n.toInt).map(i => s"This is string number $i"))
 
