@@ -32,7 +32,7 @@ class Routes extends LazyLogging {
 
     case r @ Get -> Root / "cookies" / "delete" => Okk(s"Ate all the cookies ${r.multiParams}", `Content-Type`.`text/plain`, Headers((for (c <- r.multiParams) yield Header.`Set-Cookie`(Cookie(c._1, "", path = Some("/"), expires = Some(UnixEpoch), maxAge = Some(0)))).toList))
 
-    case r @ Get -> Root / "cookies"  => Ok(r.headers.get(Header.`Cookie`).map(_.value).getOrElse("What Cookies?"))
+    case r @ Get -> Root / "cookies"  => Ok(r.headers.get(Header.`Cookie`).fold("What Cookies?")(_.value))
 
     case r@Get -> Root / "delay" / time => Try(time.toInt).map{t =>
       if(t > 10) {
