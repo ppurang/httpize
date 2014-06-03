@@ -38,6 +38,16 @@ class Routes extends LazyLogging {
       if(t > 10) {
         BadRequest(s"From n to 10 seconds and $time is not in it.")
       } else {
+        Ok(Process.sleepUntil(Process.sleep(t seconds) fby Process(true))(Process(s"Phew! Done after $t seconds.")))
+      }
+    }.getOrElse(BadRequest(s"$time needs to be an int"))
+
+    //the following is the original and was exposed under /delay now it has been
+    // exposed under /sdelay
+    case r@Get -> Root / "sdelay" / time => Try(time.toInt).map{t =>
+      if(t > 10) {
+        BadRequest(s"From n to 10 seconds and $time is not in it.")
+      } else {
         Process.sleep(t seconds).run.run
         Ok(s"Phew! Done after $t seconds.")
       }
