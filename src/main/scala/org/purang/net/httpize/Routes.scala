@@ -28,7 +28,11 @@ class Routes extends LazyLogging {
 
     case r @ Get -> Root / "headers" =>  Ok(HeadersContainer(r.headers))
 
-    case r @ Get -> Root / "cookies" / "set" => Okk(s"Bought some cookies ${r.multiParams}", `Content-Type`.`text/plain`, Headers((for (c <- r.multiParams) yield Header.`Set-Cookie`(Cookie(c._1, c._2.mkString(","), path = Some("/")))).toList))
+    case r @ Get -> Root / "cookies" / "set" =>
+      val ok = Ok(s"Bought some cookies ${r.multiParams}")
+      val cookies = for (c <- r.multiParams) yield Cookie(c._1, c._2.mkString(","), path = Some("/"))
+      cookies.foldLeft(ok)((r,c) => r.addCookie(c))
+
 
     case r @ Get -> Root / "cookies" / "delete" => Okk(s"Ate all the cookies ${r.multiParams}", `Content-Type`.`text/plain`, Headers((for (c <- r.multiParams) yield Header.`Set-Cookie`(Cookie(c._1, "", path = Some("/"), expires = Some(UnixEpoch), maxAge = Some(0)))).toList))
 
