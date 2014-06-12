@@ -1,5 +1,7 @@
 # HTTP-IZE 
 
+http://httpize.herokuapp.com/
+
 Resemble HTTP as in http://www.merriam-webster.com/dictionary/-ize
 
 
