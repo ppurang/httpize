@@ -1,11 +1,9 @@
 package org.purang.net.httpize
 
-import org.http4s.dsl._
-import org.http4s._
+import org.http4s.Http4s._
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
-import org.http4s.dsl./
-import org.http4s.Status._
+import org.http4s.server.HttpService
 
 
 class StaticRoutes extends LazyLogging {
