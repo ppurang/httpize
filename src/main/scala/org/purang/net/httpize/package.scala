@@ -35,7 +35,7 @@ package object httpize {
         len foreach {
           headers :+= Header.`Content-Length`(_)
         }
-        Response(self, headers ++ mheaders, proc)
+        Response(self, headers = headers ++ mheaders, body = proc)
       }
     }
   }

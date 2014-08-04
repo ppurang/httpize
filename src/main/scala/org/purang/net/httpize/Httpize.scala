@@ -4,20 +4,16 @@ import org.http4s.blaze._
 import org.http4s.blaze.pipeline.LeafBuilder
 import org.http4s.blaze.websocket.WebSocketSupport
 import org.http4s.blaze.channel.nio2.NIO2ServerChannelFactory
-import org.http4s.blaze.channel.nio1.SocketServerChannelFactory
 
 import java.net.InetSocketAddress
 import java.util.concurrent.Executors
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import java.nio.channels.AsynchronousSocketChannel
-import org.http4s.{HttpService, Status, Request}
+import org.http4s.server.HttpService
+import org.http4s.{Status, Request}
 import org.http4s.blaze.channel.SocketConnection
-import org.http4s.middleware.GZip
+import org.http4s.server.middleware.GZip
 
-
-/**
- * Created by Bryce Anderson on 3/23/14.
- */
 
 class Httpize(addr: InetSocketAddress) extends StrictLogging {
 
