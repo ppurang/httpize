@@ -1,12 +1,11 @@
 package org.purang.net.httpize
 
-import org.http4s
+import java.util.concurrent.ScheduledThreadPoolExecutor
+
 import org.http4s._
 import org.http4s.dsl._
-import org.http4s.Http4s._
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
-import org.http4s.dsl./
 import org.http4s.Header.{`Content-Type`}
 import org.http4s.server.HttpService
 import java.lang.{Process => _}
@@ -14,7 +13,9 @@ import scalaz.stream.Process
 import concurrent.duration._
 import scala.util.Try
 
-class Routes extends LazyLogging {
+class Routes(ec: ScheduledThreadPoolExecutor) extends LazyLogging {
+
+  private implicit def _ec = ec
 
   val service: HttpService = {
     case GET -> Root / "hello" => Ok("Hello world!")
@@ -33,7 +34,12 @@ class Routes extends LazyLogging {
       cookies.foldLeft(ok)((r,c) => r.addCookie(c))
 
 
-    case r @ GET -> Root / "cookies" / "delete" => Okk(s"Ate all the cookies ${r.multiParams}", `Content-Type`.`text/plain`, Headers((for (c <- r.multiParams) yield Header.`Set-Cookie`(http4s.Cookie(c._1, "", path = Some("/"), expires = Some(DateTime.UnixEpoch), maxAge = Some(0)))).toList))
+    case r @ GET -> Root / "cookies" / "delete" =>
+      val h = Headers((for (c <- r.multiParams) yield Header.`Set-Cookie`(Cookie(c._1, "", path = Some("/"), expires = Some(DateTime.UnixEpoch), maxAge = Some(0)))).toList)
+                .put(`Content-Type`.`text/plain`)
+
+      Ok(s"Ate all the cookies ${r.multiParams}")
+          .withHeaders(h)
 
     case r @ GET -> Root / "cookies"  => Ok(r.headers.get(Header.`Cookie`).fold("What Cookies?")(_.value))
 

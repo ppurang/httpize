@@ -7,7 +7,8 @@ import org.http4s.Header.`Content-Type`
 import scalaz.stream.io.chunkR
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
-import org.http4s.Http4s._
+import org.http4s.dsl._
+
 
 /**
  * Created by Bryce Anderson on 4/12/14.
@@ -32,6 +33,7 @@ class ResourceCache extends StrictLogging {
     } else Option(getClass.getResourceAsStream(sanitize(path)))
     rs.map { p =>
       val bytes = Process.constant(8*1024)
+        .toSource
         .through(chunkR(p))
         .runLog
         .run
@@ -62,8 +64,6 @@ class ResourceCache extends StrictLogging {
           .getOrElse(MediaType.`application/octet-stream`)
         else MediaType.`application/octet-stream`
       }
-
-
 
       Ok(bytes).putHeaders(`Content-Type`(mime))
     }
