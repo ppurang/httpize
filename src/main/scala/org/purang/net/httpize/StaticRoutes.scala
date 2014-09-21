@@ -1,6 +1,6 @@
 package org.purang.net.httpize
 
-import org.http4s.Http4s._
+import org.http4s.dsl._
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
 import org.http4s.server.HttpService

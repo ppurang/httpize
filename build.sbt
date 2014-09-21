@@ -6,15 +6,13 @@ organization := "org.purang.net"
 
 scalaVersion := "2.10.4"
 
-val http4sVersion = "0.2.0"
+val http4sVersion = "0.3.0"
 
 libraryDependencies ++= Seq(
   "org.http4s" %% "http4s-core" % http4sVersion,
   "org.http4s" %% "http4s-dsl" % http4sVersion,
-  "org.http4s" %% "http4s-blaze" % http4sVersion,
-  "io.argonaut" %% "argonaut" % "6.0.4",
-  "org.scalaz" %% "scalaz-core" % "7.0.6"  withSources(),
-  "org.scalaz" %% "scalaz-concurrent" % "7.0.6"  withSources(),
+  "org.http4s" %% "http4s-blazeserver" % http4sVersion,
+  "io.argonaut" %% "argonaut" % "6.1-M4" changing(),
   "org.scalacheck" %% "scalacheck" % "1.11.4" % "test",
   "org.scalatest" %% "scalatest" % "2.1.6" % "test"
   )
