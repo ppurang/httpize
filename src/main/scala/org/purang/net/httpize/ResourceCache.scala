@@ -1,19 +1,20 @@
 package org.purang.net.httpize
-import scala.collection.mutable
+
+import org.http4s.headers.`Content-Type`
 import org.http4s.{DateTime, MediaType, Response, Request}
+import org.http4s.dsl._
+
+import scala.collection.mutable
+
 import scalaz.concurrent.Task
 import scalaz.stream.Process
-import org.http4s.Header.`Content-Type`
 import scalaz.stream.io.chunkR
-import com.typesafe.scalalogging.slf4j.StrictLogging
-
-import org.http4s.dsl._
 
 
 /**
  * Created by Bryce Anderson on 4/12/14.
  */
-class ResourceCache extends StrictLogging {
+class ResourceCache {
 
   private val startDate = DateTime.now
 
@@ -32,7 +33,7 @@ class ResourceCache extends StrictLogging {
       Option(getClass.getResourceAsStream(sanitize(path)))
     } else Option(getClass.getResourceAsStream(sanitize(path)))
     rs.map { p =>
-      val bytes = Process.constant(8*1024)
+      val bytes  = Process.constant(8*1024)
         .toSource
         .through(chunkR(p))
         .runLog
@@ -69,10 +70,8 @@ class ResourceCache extends StrictLogging {
     }
   }
 
-  def getResource(dir: String, name: String, req: Request): Task[Response] =  {
+  def getResource(dir: String, name: String, req: Request): Task[Response] =
       _getResource(dir, name)
-        //.addHeaders(`Last-Modified`(startDate))
-  }
 
 }
 

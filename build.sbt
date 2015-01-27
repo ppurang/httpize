@@ -4,15 +4,15 @@ version := "0.1.0"
 
 organization := "org.purang.net"
 
-scalaVersion := "2.11.2"
+scalaVersion := "2.11.5"
 
-val http4sVersion = "0.3.0"
+val http4sVersion = "0.6.0"
 
 libraryDependencies ++= Seq(
   "org.http4s" %% "http4s-core" % http4sVersion,
   "org.http4s" %% "http4s-dsl" % http4sVersion,
   "org.http4s" %% "http4s-blazeserver" % http4sVersion,
-  "io.argonaut" %% "argonaut" % "6.1-M4" changing(),
+  "org.http4s" %% "http4s-argonaut" % http4sVersion,
   "org.scalacheck" %% "scalacheck" % "1.11.4" % "test",
   "org.scalatest" %% "scalatest" % "2.1.6" % "test"
   )
