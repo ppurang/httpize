@@ -1,23 +1,24 @@
 package org.purang.net.httpize
 
-import java.util.concurrent.ScheduledThreadPoolExecutor
 
-import org.http4s._
+import java.util.concurrent.ScheduledExecutorService
+
+import org.http4s.{DateTime, Cookie, Headers, headers, Response}
 import org.http4s.dsl._
-
-import com.typesafe.scalalogging.slf4j.LazyLogging
-import org.http4s.Header.{`Content-Type`}
+import org.http4s.headers.`Set-Cookie`
 import org.http4s.server.HttpService
+
+
 import java.lang.{Process => _}
 import scalaz.stream.Process
 import concurrent.duration._
 import scala.util.Try
 
-class Routes(ec: ScheduledThreadPoolExecutor) extends LazyLogging {
 
+class Routes(ec: ScheduledExecutorService) {
   private implicit def _ec = ec
 
-  val service: HttpService = {
+  val service: HttpService = HttpService {
     case GET -> Root / "hello" => Ok("Hello world!")
 
     case GET -> Root / "hello" / rest => Ok(s"Hello, $rest!")
@@ -30,18 +31,17 @@ class Routes(ec: ScheduledThreadPoolExecutor) extends LazyLogging {
 
     case r @ GET -> Root / "cookies" / "set" =>
       val ok = Ok(s"Bought some cookies ${r.multiParams}")
-      val cookies = for (c <- r.multiParams) yield Cookie(c._1, c._2.mkString(","), path = Some("/"))
+      val cookies = for ((n,ps) <- r.multiParams) yield org.http4s.Cookie(n, ps.mkString(","), path = Some("/"))
       cookies.foldLeft(ok)((r,c) => r.addCookie(c))
 
-
     case r @ GET -> Root / "cookies" / "delete" =>
-      val h = Headers((for (c <- r.multiParams) yield Header.`Set-Cookie`(Cookie(c._1, "", path = Some("/"), expires = Some(DateTime.UnixEpoch), maxAge = Some(0)))).toList)
-                .put(`Content-Type`.`text/plain`)
+      val h = Headers((for ((n,_) <- r.multiParams) yield `Set-Cookie`(Cookie(n, "", path = Some("/"), expires = Some(DateTime.UnixEpoch), maxAge = Some(0)))).toList)
 
       Ok(s"Ate all the cookies ${r.multiParams}")
           .withHeaders(h)
 
-    case r @ GET -> Root / "cookies"  => Ok(r.headers.get(Header.`Cookie`).fold("What Cookies?")(_.value))
+
+    case r @ GET -> Root / "cookies"  => Ok(r.headers.get(headers.Cookie).fold("What Cookies?")(_.value))
 
     case r@GET -> Root / "delay" / time => Try(time.toInt).map{t =>
       if(t > 10) {
@@ -57,8 +57,9 @@ class Routes(ec: ScheduledThreadPoolExecutor) extends LazyLogging {
       if(t > 10) {
         BadRequest(s"From n to 10 seconds and $time is not in it.")
       } else {
-        Process.sleep(t seconds).run.run
-        Ok(s"Phew! Done after $t seconds.")
+        Process.sleep(t seconds).run.flatMap(_ =>
+          Ok(s"Phew! Done after $t seconds.")
+        )
       }
     }.getOrElse(BadRequest(s"$time needs to be an int"))
 
@@ -71,11 +72,9 @@ class Routes(ec: ScheduledThreadPoolExecutor) extends LazyLogging {
 }
 
 
-class GzipRoutes extends LazyLogging {
-
-  val service: HttpService = {
+class GzipRoutes {
+  val service = HttpService {
     case r @ GET -> Root / "gzip" =>  Ok(All(r))
   }
-
 }
 

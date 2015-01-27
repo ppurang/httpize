@@ -1,10 +1,10 @@
 package org.purang.net
 
-import argonaut._, Argonaut._
+import _root_.argonaut._
+import _root_.argonaut.Argonaut._
 import org.http4s._
-import scodec.bits.ByteVector
 
-import Header.`Content-Type`.`application/json`
+import org.http4s.Cookie
 import scalaz.concurrent.{Strategy, Task}
 import java.util.concurrent.ExecutorService
 
@@ -15,10 +15,8 @@ package object httpize {
       Function.unlift(pf.lift(_) flatMap that.lift)
   }
 
-  implicit def TWritable[T](implicit charset: Charset = Charset.`UTF-8`, encode: EncodeJson[T]) = {
-    def go(t: T) = ByteVector.view(encode(t).nospaces.getBytes(charset.nioCharset))
-    Writable.simple(go, Headers(`application/json`.withCharset(charset)))
-  }
+  implicit def jsonEncoderOf[A](implicit encoder: EncodeJson[A]): EntityEncoder[A] =
+    argonaut.jsonEncoderOf(encoder)
 
   //IP address of remote client:
   case class IP(remote: String, `x-forwarded-for`: String)
@@ -26,7 +24,7 @@ package object httpize {
   object IP {
     def apply(r: Request): IP = {
       IP(r.remoteAddr.getOrElse("xx.xx.xx.xx"),
-        s"${r.headers.get(org.http4s.Header.`X-Forwarded-For`)}")
+        s"${r.headers.get(org.http4s.headers.`X-Forwarded-For`)}")
     }
 
     implicit def IPCodecJson: CodecJson[IP] =
@@ -38,7 +36,7 @@ package object httpize {
 
   object UserAgent {
     def apply(r: Request): UserAgent = {
-      UserAgent(r.headers.get(org.http4s.Header.`User-Agent`).toString)
+      UserAgent(r.headers.get(org.http4s.headers.`User-Agent`).toString)
     }
 
     implicit def UserAgentCodecJson: CodecJson[UserAgent] = casecodec1(UserAgent.apply(_: String), UserAgent.unapply)("user-agent")
