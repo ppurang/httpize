@@ -1,19 +1,15 @@
 package org.purang.net
 
-import _root_.argonaut._
-import _root_.argonaut.Argonaut._
+import argonaut._
+import argonaut.Argonaut._
 import org.http4s._
+import org.http4s.headers.`X-Forwarded-For`
 
-import org.http4s.Cookie
 import scalaz.concurrent.{Strategy, Task}
 import java.util.concurrent.ExecutorService
 
 
 package object httpize {
-  implicit class ComposePartial[A, B](pf: PartialFunction[A, B]) {
-    def andThenPartial[C](that: PartialFunction[B, C]): PartialFunction[A, C] =
-      Function.unlift(pf.lift(_) flatMap that.lift)
-  }
 
   implicit def jsonEncoderOf[A](implicit encoder: EncodeJson[A]): EntityEncoder[A] =
     argonaut.jsonEncoderOf(encoder)
@@ -24,7 +20,7 @@ package object httpize {
   object IP {
     def apply(r: Request): IP = {
       IP(r.remoteAddr.getOrElse("xx.xx.xx.xx"),
-        s"${r.headers.get(org.http4s.headers.`X-Forwarded-For`)}")
+        s"${r.headers.get(`X-Forwarded-For`)}")
     }
 
     implicit def IPCodecJson: CodecJson[IP] =

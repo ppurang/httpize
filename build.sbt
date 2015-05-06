@@ -1,12 +1,12 @@
 name := "httpize"
 
-version := "0.1.0"
+version := "0.2.0"
 
 organization := "org.purang.net"
 
-scalaVersion := "2.11.5"
+scalaVersion := "2.11.6"
 
-val http4sVersion = "0.6.0"
+val http4sVersion = "0.7.0"
 
 libraryDependencies ++= Seq(
   "org.http4s" %% "http4s-core" % http4sVersion,

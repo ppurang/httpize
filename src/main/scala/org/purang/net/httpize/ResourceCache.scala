@@ -11,9 +11,7 @@ import scalaz.stream.Process
 import scalaz.stream.io.chunkR
 
 
-/**
- * Created by Bryce Anderson on 4/12/14.
- */
+
 class ResourceCache {
 
   private val startDate = DateTime.now

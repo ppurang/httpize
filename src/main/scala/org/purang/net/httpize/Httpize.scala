@@ -31,7 +31,7 @@ class Httpize(host: String, port: Int) {
   // Build the server instance and begin
   def run(): Unit = BlazeBuilder
     .bindHttp(port, host)
-    .mountService(service, "")
+    .mountService(service)
     .run
 }
 

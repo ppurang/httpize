@@ -11,6 +11,7 @@ import org.http4s.server.HttpService
 
 import java.lang.{Process => _}
 import scalaz.stream.Process
+import scalaz.stream.{ time => stime }
 import concurrent.duration._
 import scala.util.Try
 
@@ -43,11 +44,11 @@ class Routes(ec: ScheduledExecutorService) {
 
     case r @ GET -> Root / "cookies"  => Ok(r.headers.get(headers.Cookie).fold("What Cookies?")(_.value))
 
-    case r@GET -> Root / "delay" / time => Try(time.toInt).map{t =>
+    case r@GET -> Root / "delay" / time => Try(time.toInt).map{ t =>
       if(t > 10) {
         BadRequest(s"From n to 10 seconds and $time is not in it.")
       } else {
-        Ok(Process.sleepUntil(Process.sleep(t seconds) fby Process(true))(Process(s"Phew! Done after $t seconds.")))
+        Ok(Process.sleepUntil(stime.sleep(t seconds) fby Process(true))(Process(s"Phew! Done after $t seconds.")))
       }
     }.getOrElse(BadRequest(s"$time needs to be an int"))
 
@@ -57,7 +58,7 @@ class Routes(ec: ScheduledExecutorService) {
       if(t > 10) {
         BadRequest(s"From n to 10 seconds and $time is not in it.")
       } else {
-        Process.sleep(t seconds).run.flatMap(_ =>
+        stime.sleep(t seconds).run.flatMap(_ =>
           Ok(s"Phew! Done after $t seconds.")
         )
       }
@@ -65,7 +66,9 @@ class Routes(ec: ScheduledExecutorService) {
 
     case req @ (POST -> Root / "post" | PUT -> Root / "put" | DELETE -> Root / "delete" | PATCH -> Root / "patch" ) => Tasks(req){Response(body = req.body)}
 
-    case GET -> Root / "stream" / n => Ok(Process.range(0, n.toInt).map(i => s"This is string number $i"))
+    case GET -> Root / "stream" / n => Try(n.toInt).map { n =>
+      Ok(Process.range(0, math.min(100, n)).map(i => s"This is string number $i"))
+    }.getOrElse(BadRequest(s"$n needs to be an int"))
 
   }
 
