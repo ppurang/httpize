@@ -33,6 +33,7 @@ class Httpize(host: String, port: Int) {
     .bindHttp(port, host)
     .mountService(service)
     .run
+    .awaitShutdown()
 }
 
 object Httpize {
