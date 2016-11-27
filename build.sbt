@@ -14,7 +14,8 @@ libraryDependencies ++= Seq(
   "org.http4s" %% "http4s-blaze-server" % http4sVersion,
   "org.http4s" %% "http4s-argonaut" % http4sVersion,
   "org.scalacheck" %% "scalacheck" % "1.11.4" % "test",
-  "org.scalatest" %% "scalatest" % "2.1.6" % "test"
+  "org.scalatest" %% "scalatest" % "2.1.6" % "test",
+  "ch.qos.logback" % "logback-classic" % "1.1.7"
   )
 
 resolvers ++= Seq(
