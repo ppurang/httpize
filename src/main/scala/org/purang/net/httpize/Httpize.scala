@@ -1,13 +1,15 @@
 package org.purang.net.httpize
 
+import org.http4s.{HttpService, Request}
+import org.http4s.server.syntax._
 import org.http4s.server.blaze.BlazeBuilder
-import org.http4s.server.HttpService
-import org.http4s.Request
 import org.http4s.server.middleware.GZip
-
 import org.log4s.getLogger
-
 import java.util.concurrent.Executors
+
+import org.http4s.server.{Server, ServerApp}
+
+import scalaz.concurrent.Task
 
 
 class Httpize(host: String, port: Int) {
@@ -20,23 +22,24 @@ class Httpize(host: String, port: Int) {
   val static = new StaticRoutes().service
   val gzipped = new GzipRoutes().service
 
-  val service: HttpService =  (routes orElse GZip(gzipped) orElse static).contramap { req: Request =>
-    val uri = req.uri.path
-    if (uri.endsWith("html")) {
-      logger.info(s"${req.remoteAddr.getOrElse("null")} -> ${req.method}: ${req.uri.path}")
-    }
-    req
-  }
+  val service: HttpService = routes orElse GZip(gzipped) orElse static
+  // TODO: fix contramap
+  //val service: HttpService =  (routes orElse GZip(gzipped) orElse static).contramap { req: Request =>
+  //  val uri = req.uri.path
+  //  if (uri.endsWith("html")) {
+  //    logger.info(s"${req.remoteAddr.getOrElse("null")} -> ${req.method}: ${req.uri.path}")
+  //  }
+  //  req
+  //}
 
   // Build the server instance and begin
-  def run(): Unit = BlazeBuilder
+  def run(): Task[Server] = BlazeBuilder
     .bindHttp(port, host)
     .mountService(service)
-    .run
-    .awaitShutdown()
+    .start
 }
 
-object Httpize {
+object Httpize extends ServerApp {
   private val logger = getLogger
   val ip = Option(System.getenv("OPENSHIFT_DIY_IP")).getOrElse("0.0.0.0")
   val port = (Option(System.getenv("PORT")) orElse
@@ -47,6 +50,6 @@ object Httpize {
   logger.info(s"Starting Http4s-blaze example on '$ip:$port'")
   println(s"Starting Http4s-blaze example on '$ip:$port'")
 
-  def main(args: Array[String]): Unit = new Httpize(ip, port).run()
+  override def server(args: List[String]): Task[Server] = new Httpize(ip, port).run()
 }
 

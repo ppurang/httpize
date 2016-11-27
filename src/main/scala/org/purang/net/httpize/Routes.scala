@@ -3,15 +3,15 @@ package org.purang.net.httpize
 
 import java.util.concurrent.ScheduledExecutorService
 
-import org.http4s.{DateTime, Cookie, Headers, headers, Response}
+import org.http4s.{Cookie, Headers, Response, headers}
 import org.http4s.dsl._
 import org.http4s.headers.`Set-Cookie`
-import org.http4s.server.HttpService
-
+import org.http4s.HttpService
+import java.time.Instant
 
 import java.lang.{Process => _}
 import scalaz.stream.Process
-import scalaz.stream.{ time => stime }
+import scalaz.stream.{time => stime}
 import concurrent.duration._
 import scala.util.Try
 
@@ -36,7 +36,7 @@ class Routes(ec: ScheduledExecutorService) {
       cookies.foldLeft(ok)((r,c) => r.addCookie(c))
 
     case r @ GET -> Root / "cookies" / "delete" =>
-      val h = Headers((for ((n,_) <- r.multiParams) yield `Set-Cookie`(Cookie(n, "", path = Some("/"), expires = Some(DateTime.UnixEpoch), maxAge = Some(0)))).toList)
+      val h = Headers((for ((n,_) <- r.multiParams) yield `Set-Cookie`(Cookie(n, "", path = Some("/"), expires = Some(Instant.now()), maxAge = Some(0)))).toList)
 
       Ok(s"Ate all the cookies ${r.multiParams}")
           .withHeaders(h)

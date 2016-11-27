@@ -1,6 +1,6 @@
 package org.purang.net.httpize
 
-import org.http4s.server.HttpService
+import org.http4s.HttpService
 import org.http4s.dsl._
 
 

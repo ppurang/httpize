@@ -12,5 +12,8 @@ object Headerz {
     override def matchHeader(header: Header): Option[Header] =
       if (header.name == name) Some(header)
       else None
+
+    // TODO: should be implemented
+    override def parse(s: String) = ???
   }
 }

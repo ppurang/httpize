@@ -1,11 +1,12 @@
 package org.purang.net.httpize
 
+import java.time.LocalDateTime
+
 import org.http4s.headers.`Content-Type`
-import org.http4s.{DateTime, MediaType, Response, Request}
+import org.http4s.{MediaType, Request, Response}
 import org.http4s.dsl._
 
 import scala.collection.mutable
-
 import scalaz.concurrent.Task
 import scalaz.stream.Process
 import scalaz.stream.io.chunkR
@@ -14,7 +15,7 @@ import scalaz.stream.io.chunkR
 
 class ResourceCache {
 
-  private val startDate = DateTime.now
+  private val startDate = LocalDateTime.now
 
   private val cacheMap = new mutable.HashMap[String, Array[Byte]]()
 
