@@ -22,15 +22,13 @@ class Httpize(host: String, port: Int) {
   val static = new StaticRoutes().service
   val gzipped = new GzipRoutes().service
 
-  val service: HttpService = routes orElse GZip(gzipped) orElse static
-  // TODO: fix contramap
-  //val service: HttpService =  (routes orElse GZip(gzipped) orElse static).contramap { req: Request =>
-  //  val uri = req.uri.path
-  //  if (uri.endsWith("html")) {
-  //    logger.info(s"${req.remoteAddr.getOrElse("null")} -> ${req.method}: ${req.uri.path}")
-  //  }
-  //  req
-  //}
+  val service: HttpService = (routes orElse GZip(gzipped) orElse static).local { req: Request =>
+    val uri = req.uri.path
+    if (uri.endsWith("html")) {
+      logger.info(s"${req.remoteAddr.getOrElse("null")} -> ${req.method}: ${req.uri.path}")
+    }
+    req
+  }
 
   // Build the server instance and begin
   def run(): Task[Server] = BlazeBuilder
