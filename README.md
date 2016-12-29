@@ -25,12 +25,6 @@ For rapid development use triggered `reStart`.
 sbt> ~reStart
 ```
 
-You can also generate `IntelliJ IDEA` files using:
-
-```sh
-sbt> gen-idea
-```
-
 To deploy the project to a vm at heroku (and given that heroku toolbelt is already installed):
 
 ```sh 
@@ -48,9 +42,3 @@ Fork the repository and create pull requests.
 httpbin.org for the inspiration
 
 http4s_demo for seeding the project 
-
-
-
-
-
-

@@ -66,7 +66,7 @@ package object httpize {
     import scalaz._, Scalaz._
 
     def apply[A](req: Request, pool: ExecutorService = Strategy.DefaultExecutorService): (=> A) => Task[A] = a => req.headers.get(
-      org.http4s.Headerz.`Execution-Mode`
+      Headerz.`Execution-Mode`
     ).fold(Task.now(a))(h => {
       val hv = h.value.toLowerCase
       if (hv === "delay") {
