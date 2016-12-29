@@ -13,8 +13,6 @@ libraryDependencies ++= Seq(
   "org.http4s" %% "http4s-dsl" % http4sVersion,
   "org.http4s" %% "http4s-blaze-server" % http4sVersion,
   "org.http4s" %% "http4s-argonaut" % http4sVersion,
-  "org.scalacheck" %% "scalacheck" % "1.11.4" % "test",
-  "org.scalatest" %% "scalatest" % "2.1.6" % "test",
   "ch.qos.logback" % "logback-classic" % "1.1.7"
   )
 
@@ -32,8 +30,6 @@ scalacOptions ++= Seq("-encoding",
 
 Revolver.settings
 
-seq(com.typesafe.sbt.SbtStartScript.startScriptForClassesSettings: _*)
-
 cancelable := true
 
 fork := true
@@ -43,3 +39,5 @@ logBuffered := false
 //seq(bintrayPublishSettings:_*)
 
 licenses += ("BSD", url("http://www.tldrlegal.com/license/bsd-3-clause-license-%28revised%29"))
+
+enablePlugins(JavaServerAppPackaging)
